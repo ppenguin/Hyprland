@@ -102,6 +102,19 @@ in {
       '';
     };
 
+    # # this should probably be reversed, i.e. "add all except"
+    # extraPropagatedEnvVars = lib.mkOption {
+    #   type = with lib.types; listOf str;
+    #   default = [];
+    #   defaultText = lib.literalExpression "[]";
+    #   description = ''
+    #     Environment variables that should be imported to the session additional to the default ones
+    #     (`[ "DISPLAY" "WAYLAND_DISPLAY" "HYPRLAND_INSTANCE_SIGNATURE" "XDG_CURRENT_DESKTOP" ]`).
+    #     To have anything spawned in your graphical session working as you would expect (similar to when you execute it in a shell),
+    #     you should probably add `PATH`, `SSH_AUTH_SOCK` () .... ***WIP***
+    #   '';
+    # };
+
     imports = [
       (
         lib.mkRenamedOptionModule
@@ -123,7 +136,7 @@ in {
     xdg.configFile."hypr/hyprland.conf" = lib.mkIf (cfg.extraConfig != null) {
       text =
         (lib.optionalString cfg.systemdIntegration ''
-          exec-once=${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP && systemctl --user start hyprland-session.target
+          exec-once=${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all && systemctl --user start hyprland-session.target
         '')
         + cfg.extraConfig;
 
