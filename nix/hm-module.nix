@@ -161,7 +161,7 @@ in {
         Documentation = ["man:systemd.special(7)"];
         BindsTo = ["graphical-session.target"];
         Wants = ["graphical-session-pre.target"];
-        After = ["graphical-session-pre.target"];
+        After = ["graphical-session-pre.target" "gnome-keyring.service"]; # if using keyring, then start hyprland after it
       };
     };
 
