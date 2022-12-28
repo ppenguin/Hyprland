@@ -9,6 +9,7 @@ self: {
     enableXWayland = cfg.xwayland.enable;
     hidpiXWayland = cfg.xwayland.hidpi;
     nvidiaPatches = cfg.nvidiaPatches;
+    extraSessionCommands = cfg.extraSessionCommands;
   };
 in {
   options.wayland.windowManager.hyprland = {
@@ -18,7 +19,7 @@ in {
       type = with lib.types; nullOr package;
       default = defaultHyprlandPackage;
       description = ''
-        Hyprland package to use. Will override the 'xwayland' option.
+        Hyprland package to use. Will override the 'xwayland' and 'extraSessionCommands' options.
 
         Defaults to the one provided by the flake. Set it to
         <literal>pkgs.hyprland</literal> to use the one provided by nixpkgs or
@@ -43,6 +44,26 @@ in {
           <listitem><para><literal>HYPRLAND_INSTANCE_SIGNATURE</literal></para></listitem>
           <listitem><para><literal>XDG_CURRENT_DESKTOP</literal></para></listitem>
         </itemizedlist>
+      '';
+    };
+
+    # copied from HM modules/services/window-managers/i3-sway/sway.nix
+    # Hopefully this fixes the significant problems arising from not having HM (and others)
+    # sourced in the Hyprland env. (This is highly problematic when using app launchers instead of spawning apps from the terminal)
+    extraSessionCommands = mkOption {
+      type = types.lines;
+      default = "";
+      example = ''
+        export SDL_VIDEODRIVER=wayland
+        # needs qt5.qtwayland in systemPackages
+        export QT_QPA_PLATFORM=wayland
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+        # Fix for some Java AWT applications (e.g. Android Studio),
+        # use this if they aren't displayed properly:
+        export _JAVA_AWT_WM_NONREPARENTING=1
+      '';
+      description = ''
+        Shell commands executed just before Hyprland is started.
       '';
     };
 
