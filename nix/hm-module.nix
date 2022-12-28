@@ -50,7 +50,7 @@ in {
     # copied from HM modules/services/window-managers/i3-sway/sway.nix
     # Hopefully this fixes the significant problems arising from not having HM (and others)
     # sourced in the Hyprland env. (This is highly problematic when using app launchers instead of spawning apps from the terminal)
-    extraSessionCommands = mkOption {
+    extraSessionCommands = lib.mkOption {
       type = types.lines;
       default = "";
       example = ''
