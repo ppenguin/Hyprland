@@ -14,6 +14,8 @@ result*
 /.vscode/
 .envrc
 .cache
+.direnv/
+.gitignore
 
 *.o
 *-protocol.c
